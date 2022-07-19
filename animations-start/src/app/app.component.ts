@@ -1,4 +1,4 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { animate, group, keyframes, state, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
 
 @Component({
@@ -16,8 +16,8 @@ import { Component } from '@angular/core';
         'background-color': 'blue',
         transform: 'translateX(100px)'
       })),
-      transition('normal => highlited', animate(300)),
-      transition('highlited => normal', animate(800)),
+      transition('normal <=> highlited', animate(300)),
+      //transition('highlited => normal', animate(800)),
     ]),
 
     trigger( 'wildState', [
@@ -45,8 +45,69 @@ import { Component } from '@angular/core';
         })),
         animate(500)
       ])
+    ]),
 
-    ])
+    trigger( 'list1', [
+      state('in',style({
+        opacity: 1,
+        transform: 'translateX(0px)'
+      })),
+      transition('void => *', [
+        style({
+          opacity: 0,
+          transform: 'translateX(-100px)',
+        }),
+        animate(300)
+      ]),
+      transition('* => void', [
+        animate(300, style({
+          transform: 'translateX(100px)',
+          opacity: 0
+        }))
+      ]),
+    ]),
+
+    trigger( 'list2', [
+      state('in',style({
+        opacity: 1,
+        transform: 'translateX(0px)'
+      })),
+      transition('void => *', [
+        animate(1000, keyframes([
+          style({
+            transform: 'translateX(-100px)',
+            opacity: 0,
+            offset: 0
+          }),
+          style({
+            transform: 'translateX(-50px)',
+            opacity: 0.5,
+            offset: 0.3
+          }),
+          style({
+            transform: 'translateX(-20px)',
+            opacity: 1,
+            offset: 0.8
+          }),
+          style({
+            transform: 'translateX(0px)',
+            opacity: 1,
+            offset: 1
+          })
+        ]))
+      ]),
+      transition('* => void', [
+        group([
+          animate(800, style({
+            transform: 'translateX(100px)',
+            opacity: 0
+          })),
+          animate(300, style({
+            color: 'red'
+          }))
+        ])
+      ]),
+    ]),
   ]
 })
 export class AppComponent {
@@ -66,4 +127,17 @@ export class AppComponent {
   onAdd(item) {
     this.list.push(item);
   }
+
+  onDelete(item) {
+    this.list.splice(this.list.indexOf(item), 1)
+  }
+
+  animationStarted(event) {
+    console.log(event);
+  }
+
+  animationEnded(event) {
+    console.log(event);
+  }
+
 }
